@@ -9,10 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.1.0",
+    "@next-auth/upstash-redis-adapter": "^3.0.4",
     "@pridestalkerr/adapter-redis": "^1.0.1",
+    "@tailwindcss/forms": "^0.5.3",
     "@types/node": "20.2.5",
     "@types/react": "18.2.9",
     "@types/react-dom": "18.2.4",
+    "axios": "^1.4.0",
     "class-variance-authority": "^0.6.0",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
@@ -24,8 +28,11 @@
     "npm": "^9.7.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.44.3",
+    "react-hot-toast": "^2.4.1",
     "tailwind-merge": "^1.13.1",
-    "typescript": "5.1.3"
+    "typescript": "5.1.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
