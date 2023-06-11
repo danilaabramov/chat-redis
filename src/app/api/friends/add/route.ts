@@ -2,7 +2,6 @@ import {z} from "zod";
 import {addFriendValidator} from "@/lib/validations/add-friends";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/lib/auth";
-import {fetchRedis} from "@/helpers/redis";
 import {db} from "@/lib/db";
 
 export async function POST(req: Request) {
@@ -28,19 +27,18 @@ export async function POST(req: Request) {
 
         // check if user is already added
 
-
-        const friendRequests = await db.smembers(
+        const incomingFriendRequests = await db.smembers(
             `user:${idToAdd}:incoming_friend_requests`, function (err, reply) {
                 if (err) console.error(err)
                 else console.log(reply);
             })
 
-        if (friendRequests.includes(session.user.id)) return new Response('Уже добавлен этот пользователь', {status: 400})
+        if (incomingFriendRequests.includes(session.user.id)) return new Response('Уже добавлен этот пользователь', {status: 400})
 
-        const friends = (await db.smembers(
+        const incomingFriends = (await db.smembers(
             `user:${session.user.id}:friends`))
 
-        if (friends.includes(idToAdd)) return new Response('Уже дружите с этим пользователем', {status: 400})
+        if (incomingFriends.includes(idToAdd)) return new Response('Уже дружите с этим пользователем', {status: 400})
 
         //valid request
 
