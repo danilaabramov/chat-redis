@@ -9,6 +9,8 @@ import SignOutButton from "@/components/SignOutButton";
 import FriendRequestSidebarOptions from "@/components/FriendRequestSidebarOptions";
 import {getFriendsByUserId} from '@/helpers/get-friends-by-user-id'
 import {db} from "@/lib/db";
+import SidebarChatList from "@/components/SidebarChatList";
+import MobileChatLayout from "@/components/MobileChatLayout";
 
 interface LayoutProps {
     children: ReactNode
@@ -29,7 +31,7 @@ interface SidebarOption {
 const sidebarOptions: SidebarOption[] = [
     {
         id: 1,
-        name: 'Add friend',
+        name: 'Добавить друга',
         href: '/dashboard/add',
         Icon: 'UserPlus',
     },
@@ -40,25 +42,33 @@ const Layout = async ({children}: LayoutProps) => {
     if (!session) notFound()
 
     const friends = await getFriendsByUserId(session.user.id)
-    console.log('friends', friends)
 
-    const incomingFriendRequests = await db.smembers(`user:${session.user.id}:incoming_friend_requests`);
-    const unseenRequestCount = incomingFriendRequests.length;
+    const incomingFriendRequests = await db.smembers(`user:${session.user.id}:incoming_friend_requests`) as string[];
+    const unseenRequestCount = (JSON.parse(JSON.stringify(incomingFriendRequests)) as User[]).length;
+
     return (
         <div className='w-full flex h-screen'>
-            <div className='flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200
+            <div className='md:hidden'>
+                <MobileChatLayout friends={friends} session={session} sidebarOptions={sidebarOptions}
+                                  unseenRequestCount={unseenRequestCount}/>
+            </div>
+
+            <div className='hidden md:flex h-full w-full max-w-sm grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200
             bg-white px-6'>
                 <Link href='/dashboard' className='flex h-16 shrink-0 items-center'>
                     <Icons.Logo className='h-8 w-auto text-indigo-600'/>
                 </Link>
 
-                <div className='text-xs font-semibold leading-6 text-gray-400'>
+                {friends.length > 0 && <div className='text-xs font-semibold leading-6 text-gray-400'>
                     Ваши чаты
                 </div>
+                }
 
                 <nav className='flex flex-1 flex-col'>
                     <ul role='list' className='flex flex-1 flex-col gap-y-7'>
-                        <li>{'// чаты, которые есть у этого пользователя'}</li>
+                        <li>
+                            <SidebarChatList friends={friends} sessionId={session.user.id}/>
+                        </li>
                         <li>
                             <div className='text-xs font-semibold leading-6 text-gray-400'>
                                 Обзор
@@ -86,7 +96,6 @@ const Layout = async ({children}: LayoutProps) => {
                                         </li>
                                     )
                                 })}
-
                                 <li>
                                     <FriendRequestSidebarOptions
                                         sessionId={session.user.id}
@@ -97,8 +106,8 @@ const Layout = async ({children}: LayoutProps) => {
                         </li>
 
                         <li className='-mx-6 mt-auto flex items-center'>
-                            <div
-                                className='flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900'>
+                            <div className='flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6
+                            text-gray-900'>
                                 <div className='relative h-8 w-8 bg-gray-50'>
                                     <Image
                                         fill
@@ -110,11 +119,11 @@ const Layout = async ({children}: LayoutProps) => {
                                 </div>
 
                                 <span className='sr-only'>Ваш профиль</span>
-                                <div className='flex flex-col'>
+                                <div className='flex flex-col' style={{width: 'calc(100% - 100px)'}}>
                                     <span aria-hidden='true'>{session.user.name}</span>
                                     <span className='text-xs text-zinc-400' aria-hidden='true'>
-                    {session.user.email}
-                  </span>
+                                        {session.user.email}
+                                    </span>
                                 </div>
                             </div>
 
@@ -123,7 +132,8 @@ const Layout = async ({children}: LayoutProps) => {
                     </ul>
                 </nav>
             </div>
-            {children}
+
+            <aside className='max-h-screen container py-16 md:py-12 w-full'>{children}</aside>
         </div>
     )
 }
