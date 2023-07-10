@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
         if (!session) return new Response('Неавторизованный', {status: 401})
 
-        // verify both users are not already friends
+        // оба ли пользователя еще не являются друзьями
         const isAlreadyFriends = await db.sismember(`user:${session.user.id}:friends`, idToAdd)
 
         if (isAlreadyFriends) return new Response('Уже друзья', {status: 401})
@@ -33,8 +33,7 @@ export async function POST(req: Request) {
         const user = JSON.parse(userRaw) as User
         const friend = JSON.parse(friendRaw) as User
 
-        // notify added user
-
+        // уведомление добавленного пользователя
         await Promise.all([
             pusherServer.trigger(toPusherKey(`user:${idToAdd}:friends`), 'new_friend', user),
             pusherServer.trigger(toPusherKey(`user:${session.user.id}:friends`), 'new_friend', friend),

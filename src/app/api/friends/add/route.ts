@@ -15,27 +15,26 @@ export async function POST(req: Request) {
 
         const idToAdd = await db.get(`user:email:${emailToAdd}`)
 
-        if (!idToAdd) return new Response('Этого человека не существует', {status: 400})
+        if (!idToAdd) return new Response('This person does not exist', {status: 400})
 
         const session = await getServerSession(authOptions)
 
-        if (!session) return new Response('Неавторизованный', {status: 401})
+        if (!session) return new Response('Unauthorized', {status: 401})
 
-        if (idToAdd === session.user.id) return new Response('Вы не можете добавить себя в друзья',
+        if (idToAdd === session.user.id) return new Response('You cannot add yourself as a friend',
             {status: 400})
 
-        // check if user is already added
+        // проверка, добавлен ли пользователь уже
         const isAlreadyAdded = await db.sismember(`user:${idToAdd}:incoming_friend_requests`,
             session.user.id)
 
-        if (isAlreadyAdded) return new Response('Уже добавлен этот пользователь', {status: 400})
+        if (isAlreadyAdded) return new Response('Already added this user', {status: 400})
 
         const isAlreadyFriends = await db.sismember(`user:${session.user.id}:friends`, idToAdd)
 
-        if (isAlreadyFriends) return new Response('Уже дружите с этим пользователем', {status: 400})
+        if (isAlreadyFriends) return new Response('Already friends with this user', {status: 400})
 
-        // valid request, send friend request
-
+        // действительный запрос, отправка запроса в друзья
         await pusherServer.trigger(toPusherKey(`user:${idToAdd}:incoming_friend_requests`),
             'incoming_friend_requests', {senderId: session.user.id, senderEmail: session.user.email})
 

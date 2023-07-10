@@ -1,11 +1,11 @@
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/lib/auth";
-import {notFound} from "next/navigation";
-import {db} from "@/lib/db";
-import {messageArrayValidator} from "@/lib/validations/message";
-import Image from "next/image";
-import Messages from "@/components/Messages";
-import ChatInput from "@/components/ChatInput";
+import {getServerSession} from "next-auth/next"
+import {authOptions} from "@/lib/auth"
+import {notFound} from "next/navigation"
+import {db} from "@/lib/db"
+import {messageArrayValidator} from "@/lib/validations/message"
+import Image from "next/image"
+import Messages from "@/components/Messages"
+import ChatInput from "@/components/ChatInput"
 
 interface PageProps {
     params: {
@@ -65,11 +65,11 @@ const Page = async ({params}: PageProps) => {
             </div>
         </div>
 
-        <Messages  chatId={chatId} chatPartner={chatPartner} initialMessages={initialMessages}
-                   sessionId={session.user.id} sessionImg={session.user.image}/>
+        <Messages chatId={chatId} chatPartner={chatPartner} initialMessages={initialMessages}
+                  sessionId={session.user.id} sessionImg={session.user.image}/>
         <ChatInput chatId={chatId} chatPartner={chatPartner}/>
-    </div>;
-};
+    </div>
+}
 
-export default Page;
+export default Page
 

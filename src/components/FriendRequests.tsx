@@ -21,7 +21,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({incomingFriendRequests, sessio
         pusherClient.subscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`))
 
         const friendRequestHandler = ({senderId, senderEmail,}: IncomingFriendRequest) =>
-            setFriendRequests((prev) => [...prev, { senderId, senderEmail }])
+            setFriendRequests((prev) => [...prev, {senderId, senderEmail}])
 
         pusherClient.bind('incoming_friend_requests', friendRequestHandler)
 
@@ -50,10 +50,10 @@ const FriendRequests: FC<FriendRequestsProps> = ({incomingFriendRequests, sessio
     }
 
     return <>
-        {!friendRequests.length ?
-            <p className='text-sm text-zinc-500'> Здесь нечего показывать...</p>
-            :
-            friendRequests.map((request) => (
+        {
+            !friendRequests.length ?
+                <p className='text-sm text-zinc-500'>Nothing to show here...</p>
+                : friendRequests.map(request =>
                     <div key={request.senderId} className='flex gap-4 items-center'>
                         <UserPlus className=''/>
                         <p className='font-medium text-lg'>{request.senderEmail}</p>
@@ -70,7 +70,6 @@ const FriendRequests: FC<FriendRequestsProps> = ({incomingFriendRequests, sessio
                         </button>
                     </div>
                 )
-            )
         }
     </>
 };

@@ -36,7 +36,7 @@ const MobileChatLayout: FC<MobileChatLayoutProps> =
                         <Icons.Logo className='h-6 w-auto text-indigo-600'/>
                     </Link>
                     <Button onClick={() => setOpen(true)} className='gap-4'>
-                        Меню
+                        Menu
                         <Menu className='h-6 w-6'/>
                     </Button>
                 </div>
@@ -58,7 +58,7 @@ const MobileChatLayout: FC<MobileChatLayoutProps> =
                                                     <div className='flex items-start justify-between'>
                                                         <Dialog.Title className='text-base font-semibold leading-6
                                                          text-gray-900'>
-                                                            Приборная панель
+                                                            Dashboard
                                                         </Dialog.Title>
                                                         <div className='ml-3 flex h-7 items-center'>
                                                             <button type='button' className='rounded-md bg-white
@@ -75,7 +75,7 @@ const MobileChatLayout: FC<MobileChatLayoutProps> =
 
                                                     {friends.length > 0 &&
                                                         <div className='text-xs font-semibold leading-6 text-gray-400'>
-                                                            Ваши чаты
+                                                            Your chats
                                                         </div>
                                                     }
 
@@ -90,7 +90,7 @@ const MobileChatLayout: FC<MobileChatLayoutProps> =
                                                             <li>
                                                                 <div className='text-xs font-semibold leading-6
                                                                 text-gray-400'>
-                                                                    Обзор
+                                                                    Overview
                                                                 </div>
                                                                 <ul role='list' className='-mx-2 mt-2 space-y-1'>
                                                                     {sidebarOptions.map((option) => {

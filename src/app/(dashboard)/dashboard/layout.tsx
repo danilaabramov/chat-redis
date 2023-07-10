@@ -1,16 +1,16 @@
-import {ReactNode} from "react";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/lib/auth";
-import {notFound} from "next/navigation";
+import {ReactNode} from "react"
+import {getServerSession} from "next-auth/next"
+import {authOptions} from "@/lib/auth"
+import {notFound} from "next/navigation"
 import Link from 'next/link'
 import {Icon, Icons} from '@/components/Icons'
 import Image from 'next/image'
-import SignOutButton from "@/components/SignOutButton";
-import FriendRequestSidebarOptions from "@/components/FriendRequestSidebarOptions";
+import SignOutButton from "@/components/SignOutButton"
+import FriendRequestSidebarOptions from "@/components/FriendRequestSidebarOptions"
 import {getFriendsByUserId} from '@/helpers/get-friends-by-user-id'
-import {db} from "@/lib/db";
-import SidebarChatList from "@/components/SidebarChatList";
-import MobileChatLayout from "@/components/MobileChatLayout";
+import {db} from "@/lib/db"
+import SidebarChatList from "@/components/SidebarChatList"
+import MobileChatLayout from "@/components/MobileChatLayout"
 
 interface LayoutProps {
     children: ReactNode
@@ -31,9 +31,9 @@ interface SidebarOption {
 const sidebarOptions: SidebarOption[] = [
     {
         id: 1,
-        name: 'Добавить друга',
+        name: 'Add a friend',
         href: '/dashboard/add',
-        Icon: 'UserPlus',
+        Icon: 'UserPlus'
     },
 ]
 
@@ -46,36 +46,37 @@ const Layout = async ({children}: LayoutProps) => {
     const incomingFriendRequests = await db.smembers(`user:${session.user.id}:incoming_friend_requests`) as string[];
     const unseenRequestCount = (JSON.parse(JSON.stringify(incomingFriendRequests)) as User[]).length;
 
-    return (
-        <div className='w-full flex h-screen'>
-            <div className='md:hidden'>
-                <MobileChatLayout friends={friends} session={session} sidebarOptions={sidebarOptions}
-                                  unseenRequestCount={unseenRequestCount}/>
-            </div>
+    return <div className='w-full flex h-screen'>
+        <div className='md:hidden'>
+            <MobileChatLayout friends={friends} session={session} sidebarOptions={sidebarOptions}
+                              unseenRequestCount={unseenRequestCount}/>
+        </div>
 
-            <div className='hidden md:flex h-full w-full max-w-sm grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200
-            bg-white px-6'>
-                <Link href='/dashboard' className='flex h-16 shrink-0 items-center'>
-                    <Icons.Logo className='h-8 w-auto text-indigo-600'/>
-                </Link>
+        <div className='hidden md:flex h-full w-full max-w-sm grow flex-col gap-y-5 overflow-y-auto border-r
+        border-gray-200 bg-white px-6'>
+            <Link href='/dashboard' className='flex h-16 shrink-0 items-center'>
+                <Icons.Logo className='h-8 w-auto text-indigo-600'/>
+            </Link>
 
-                {friends.length > 0 && <div className='text-xs font-semibold leading-6 text-gray-400'>
-                    Ваши чаты
+            {
+                friends.length > 0 && <div className='text-xs font-semibold leading-6 text-gray-400'>
+                    Your chats
                 </div>
-                }
+            }
 
-                <nav className='flex flex-1 flex-col'>
-                    <ul role='list' className='flex flex-1 flex-col gap-y-7'>
-                        <li>
-                            <SidebarChatList friends={friends} sessionId={session.user.id}/>
-                        </li>
-                        <li>
-                            <div className='text-xs font-semibold leading-6 text-gray-400'>
-                                Обзор
-                            </div>
+            <nav className='flex flex-1 flex-col'>
+                <ul role='list' className='flex flex-1 flex-col gap-y-7'>
+                    <li>
+                        <SidebarChatList friends={friends} sessionId={session.user.id}/>
+                    </li>
+                    <li>
+                        <div className='text-xs font-semibold leading-6 text-gray-400'>
+                            Overview
+                        </div>
 
-                            <ul role='list' className='-mx-2 mt-2 space-y-1'>
-                                {sidebarOptions.map((option) => {
+                        <ul role='list' className='-mx-2 mt-2 space-y-1'>
+                            {
+                                sidebarOptions.map(option => {
                                     const Icon = Icons[option.Icon]
                                     return (
                                         <li key={option.id}>
@@ -96,46 +97,45 @@ const Layout = async ({children}: LayoutProps) => {
                                         </li>
                                     )
                                 })}
-                                <li>
-                                    <FriendRequestSidebarOptions
-                                        sessionId={session.user.id}
-                                        initialUnseenRequestCount={unseenRequestCount}
-                                    />
-                                </li>
-                            </ul>
-                        </li>
+                            <li>
+                                <FriendRequestSidebarOptions
+                                    sessionId={session.user.id}
+                                    initialUnseenRequestCount={unseenRequestCount}
+                                />
+                            </li>
+                        </ul>
+                    </li>
 
-                        <li className='-mx-6 mt-auto flex items-center'>
-                            <div className='flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6
+                    <li className='-mx-6 mt-auto flex items-center'>
+                        <div className='flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6
                             text-gray-900'>
-                                <div className='relative h-8 w-8 bg-gray-50'>
-                                    <Image
-                                        fill
-                                        referrerPolicy='no-referrer'
-                                        className='rounded-full'
-                                        src={session.user.image || ''}
-                                        alt='Your profile picture'
-                                    />
-                                </div>
-
-                                <span className='sr-only'>Ваш профиль</span>
-                                <div className='flex flex-col' style={{width: 'calc(100% - 100px)'}}>
-                                    <span aria-hidden='true'>{session.user.name}</span>
-                                    <span className='text-xs text-zinc-400' aria-hidden='true'>
-                                        {session.user.email}
-                                    </span>
-                                </div>
+                            <div className='relative h-8 w-8 bg-gray-50'>
+                                <Image
+                                    fill
+                                    referrerPolicy='no-referrer'
+                                    className='rounded-full'
+                                    src={session.user.image || ''}
+                                    alt='Your profile picture'
+                                />
                             </div>
 
-                            <SignOutButton className='h-full aspect-square'/>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+                            <span className='sr-only'>Your profile</span>
+                            <div className='flex flex-col' style={{width: 'calc(100% - 100px)'}}>
+                                <span aria-hidden='true'>{session.user.name}</span>
+                                <span className='text-xs text-zinc-400' aria-hidden='true'>
+                                        {session.user.email}
+                                    </span>
+                            </div>
+                        </div>
 
-            <aside className='max-h-screen container py-16 md:py-12 w-full'>{children}</aside>
+                        <SignOutButton className='h-full aspect-square'/>
+                    </li>
+                </ul>
+            </nav>
         </div>
-    )
+
+        <aside className='max-h-screen container py-16 md:py-12 w-full'>{children}</aside>
+    </div>
 }
 
 export default Layout

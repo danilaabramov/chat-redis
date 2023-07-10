@@ -34,14 +34,14 @@ export async function POST(req: Request) {
 
         const message = messageValidator.parse(messageData)
 
-        // notify all connected chat room clients
+        // уведомление всех подключенных клиентов комнаты чата
         await pusherServer.trigger(toPusherKey(`chat:${chatId}`), 'incoming-message', message)
 
         await pusherServer.trigger(toPusherKey(`user:${friendId}:chats`), 'new_message', {
             ...message, senderImg: sender.image, senderName: sender.name
         })
 
-        // all valid, send the message
+        // всё верно, отправка сообщения
         await db.zadd(`chat:${chatId}:messages`, timestamp, JSON.stringify(message));
 
         return new Response('OK')
